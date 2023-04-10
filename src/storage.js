@@ -2,14 +2,13 @@
 
 "use strict";
 
-var util = require('./util');
-var $ = util.$;
-var _t = util.gettext;
-var Promise = util.Promise;
+const util = require('./util');
+const $ = util.$;
+const _t = util.gettext;
 
 const shortId = require('shortid');
 // id returns an identifier unique within this session
-var id = (function () {
+const id = (function () {
     return shortId.generate
 }());
 
@@ -27,7 +26,7 @@ var id = (function () {
  */
 exports.debug = function () {
     function trace(action, annotation) {
-        var copyAnno = JSON.parse(JSON.stringify(annotation));
+        const copyAnno = JSON.parse(JSON.stringify(annotation));
         console.debug("annotator.storage.debug: " + action, copyAnno);
     }
 
@@ -100,7 +99,7 @@ exports.noop = function () {
 };
 
 
-var HttpStorage;
+let HttpStorage;
 
 
 /**
@@ -115,7 +114,7 @@ var HttpStorage;
  */
 exports.http = function http(options) {
     // This gets overridden on app start
-    var notify = function () {};
+    let notify = function () {};
 
     if (typeof options === 'undefined' || options === null) {
         options = {};
@@ -127,7 +126,7 @@ exports.http = function http(options) {
         notify(msg, 'error');
     };
 
-    var storage = new HttpStorage(options);
+    const storage = new HttpStorage(options);
 
     return {
         configure: function (registry) {
@@ -224,7 +223,7 @@ HttpStorage.prototype['delete'] = function (annotation) {
 HttpStorage.prototype.query = function (queryObj) {
     return this._apiRequest('search', queryObj)
     .then(function (obj) {
-        var rows = obj.rows;
+        const rows = obj.rows;
         delete obj.rows;
         return {results: rows, meta: obj};
     });
@@ -257,11 +256,11 @@ HttpStorage.prototype.setHeader = function (key, value) {
  * :rtype: jqXHR
  */
 HttpStorage.prototype._apiRequest = function (action, obj) {
-    var id = obj && obj.id;
-    var url = this._urlFor(action, id);
-    var options = this._apiRequestOptions(action, obj);
+    const id = obj && obj.id;
+    const url = this._urlFor(action, id);
+    const options = this._apiRequestOptions(action, obj);
 
-    var request = $.ajax(url, options);
+    const request = $.ajax(url, options);
 
     // Append the id and action to the request object
     // for use in the error callback.
@@ -280,10 +279,10 @@ HttpStorage.prototype._apiRequest = function (action, obj) {
  * :rtype: Object
  */
 HttpStorage.prototype._apiRequestOptions = function (action, obj) {
-    var method = this._methodFor(action);
-    var self = this;
+    const method = this._methodFor(action);
+    const self = this;
 
-    var opts = {
+    let opts = {
         type: method,
         dataType: "json",
         error: function () { self._onError.apply(self, arguments); },
@@ -305,7 +304,7 @@ HttpStorage.prototype._apiRequestOptions = function (action, obj) {
         return opts;
     }
 
-    var data = obj && JSON.stringify(obj);
+    const data = obj && JSON.stringify(obj);
 
     // If emulateJSON is enabled, we send a form request (the correct
     // contentType will be set automatically by jQuery), and put the
@@ -338,7 +337,7 @@ HttpStorage.prototype._urlFor = function (action, id) {
         id = '';
     }
 
-    var url = '';
+    let url = '';
     if (typeof this.options.prefix !== 'undefined' &&
         this.options.prefix !== null) {
         url = this.options.prefix;
@@ -357,7 +356,7 @@ HttpStorage.prototype._urlFor = function (action, id) {
  * :returns String: Method for the request.
  */
 HttpStorage.prototype._methodFor = function (action) {
-    var table = {
+    const table = {
         create: 'POST',
         update: 'PUT',
         destroy: 'DELETE',
@@ -378,7 +377,7 @@ HttpStorage.prototype._onError = function (xhr) {
         return;
     }
 
-    var message;
+    let message;
     if (xhr.status === 400) {
         message = _t("The annotation store did not understand the request! " +
                      "(Error 400)");
@@ -628,7 +627,7 @@ StorageAdapter.prototype.query = function (query) {
  * :returns Promise: Resolves when loading is complete.
  */
 StorageAdapter.prototype.load = function (query) {
-    var self = this;
+    const self = this;
     return this.query(query)
         .then(function (data) {
             self.runHook('annotationsLoaded', [data.results]);
@@ -643,20 +642,20 @@ StorageAdapter.prototype._cycle = function (
     beforeEvent,
     afterEvent
 ) {
-    var self = this;
+    const self = this;
     return this.runHook(beforeEvent, [obj])
         .then(function () {
-            var safeCopy = $.extend(true, {}, obj);
+            const safeCopy = $.extend(true, {}, obj);
             delete safeCopy._local;
 
             // We use Promise.resolve() to coerce the result of the store
             // function, which can be either a value or a promise, to a promise.
-            var result = self.store[storeFunc](safeCopy);
+            const result = self.store[storeFunc](safeCopy);
             return Promise.resolve(result);
         })
         .then(function (ret) {
             // Empty obj without changing identity
-            for (var k in obj) {
+            for (const k in obj) {
                 if (obj.hasOwnProperty(k)) {
                     if (k !== '_local') {
                         delete obj[k];
