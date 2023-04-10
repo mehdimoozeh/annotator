@@ -1,12 +1,12 @@
 "use strict";
 
-var xpathRange = require('xpath-range');
+const xpathRange = require('xpath-range');
 
-var util = require('../util');
+const util = require('../util');
 
-var $ = util.$;
+const $ = util.$;
 
-var TEXTSELECTOR_NS = 'annotator-textselector';
+const TEXTSELECTOR_NS = 'annotator-textselector';
 
 // isAnnotator determines if the provided element is part of Annotator. Useful
 // for ignoring mouse actions on the annotator elements.
@@ -15,7 +15,7 @@ var TEXTSELECTOR_NS = 'annotator-textselector';
 //
 // Returns true if the element is a child of an annotator element.
 function isAnnotator(element) {
-    var elAndParents = $(element).parents().addBack();
+    const elAndParents = $(element).parents().addBack();
     return (elAndParents.filter('[class^=annotator-]').length !== 0);
 }
 
@@ -29,7 +29,7 @@ function TextSelector(element, options) {
 
     if (typeof this.element.ownerDocument !== 'undefined' &&
         this.element.ownerDocument !== null) {
-        var self = this;
+        const self = this;
         this.document = this.element.ownerDocument;
 
         $(this.document.body)
@@ -55,8 +55,7 @@ TextSelector.prototype.destroy = function () {
 //
 // Returns an Array of NormalizedRange instances.
 TextSelector.prototype.captureDocumentSelection = function () {
-    var i,
-        len,
+    let len,
         ranges = [],
         rangesToIgnore = [],
         selection = global.getSelection();
@@ -65,8 +64,8 @@ TextSelector.prototype.captureDocumentSelection = function () {
         return [];
     }
 
-    for (i = 0; i < selection.rangeCount; i++) {
-        var r = selection.getRangeAt(i),
+    for (let i = 0; i < selection.rangeCount; i++) {
+        const r = selection.getRangeAt(i),
             browserRange = new xpathRange.Range.BrowserRange(r),
             normedRange = browserRange.normalize().limit(this.element);
 
@@ -84,13 +83,13 @@ TextSelector.prototype.captureDocumentSelection = function () {
     // reapply the new ones.
     selection.removeAllRanges();
 
-    for (i = 0, len = rangesToIgnore.length; i < len; i++) {
+    for (let i = 0, len = rangesToIgnore.length; i < len; i++) {
         selection.addRange(rangesToIgnore[i]);
     }
 
     // Add normed ranges back to the selection
-    for (i = 0, len = ranges.length; i < len; i++) {
-        var range = ranges[i],
+    for (let i = 0, len = ranges.length; i < len; i++) {
+        const range = ranges[i],
             drange = this.document.createRange();
         drange.setStartBefore(range.start);
         drange.setEndAfter(range.end);
@@ -108,16 +107,16 @@ TextSelector.prototype.captureDocumentSelection = function () {
 //
 // Returns nothing.
 TextSelector.prototype._checkForEndSelection = function (event) {
-    var self = this;
+    const self = this;
 
-    var _nullSelection = function () {
+    const _nullSelection = function () {
         if (typeof self.onSelection === 'function') {
             self.onSelection([], event);
         }
     };
 
     // Get the currently selected ranges.
-    var selectedRanges = this.captureDocumentSelection();
+    const selectedRanges = this.captureDocumentSelection();
 
     if (selectedRanges.length === 0) {
         _nullSelection();
@@ -125,8 +124,8 @@ TextSelector.prototype._checkForEndSelection = function (event) {
     }
 
     // Don't show the adder if the selection was of a part of Annotator itself.
-    for (var i = 0, len = selectedRanges.length; i < len; i++) {
-        var container = selectedRanges[i].commonAncestor;
+    for (let i = 0, len = selectedRanges.length; i < len; i++) {
+        let container = selectedRanges[i].commonAncestor;
         if ($(container).hasClass('annotator-hl')) {
             container = $(container).parents('[class!=annotator-hl]')[0];
         }

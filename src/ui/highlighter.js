@@ -1,11 +1,10 @@
 "use strict";
 
-var xpathRange = require('xpath-range');
+const xpathRange = require('xpath-range');
 
-var util = require('../util');
+const util = require('../util');
 
-var $ = util.$;
-var Promise = util.Promise;
+const $ = util.$;
 
 
 // highlightRange wraps the DOM Nodes within the provided range with a highlight
@@ -19,19 +18,19 @@ function highlightRange(normedRange, cssClass) {
     if (typeof cssClass === 'undefined' || cssClass === null) {
         cssClass = 'annotator-hl';
     }
-    var white = /^\s*$/;
+    const white = /^\s*$/;
 
     // Ignore text nodes that contain only whitespace characters. This prevents
     // spans being injected between elements that can only contain a restricted
     // subset of nodes such as table rows and lists. This does mean that there
     // may be the odd abandoned whitespace node in a paragraph that is skipped
     // but better than breaking table layouts.
-    var nodes = normedRange.textNodes(),
+    const nodes = normedRange.textNodes(),
         results = [];
-    for (var i = 0, len = nodes.length; i < len; i++) {
-        var node = nodes[i];
+    for (let i = 0, len = nodes.length; i < len; i++) {
+        const node = nodes[i];
         if (!white.test(node.nodeValue)) {
-            var hl = global.document.createElement('span');
+            const hl = global.document.createElement('span');
             hl.className = cssClass;
             node.parentNode.replaceChild(hl, node);
             hl.appendChild(node);
@@ -67,7 +66,7 @@ function reanchorRange(range, rootElement) {
 // options - An options Object containing configuration options for the plugin.
 //           See `Highlighter.options` for available options.
 //
-var Highlighter = exports.Highlighter = function Highlighter(element, options) {
+const Highlighter = exports.Highlighter = function Highlighter(element, options) {
     this.element = element;
     this.options = $.extend(true, {}, Highlighter.options, options);
 };
@@ -87,18 +86,18 @@ Highlighter.prototype.destroy = function () {
 //
 // Returns nothing.
 Highlighter.prototype.drawAll = function (annotations) {
-    var self = this;
+    const self = this;
 
-    var p = new Promise(function (resolve) {
-        var highlights = [];
+    const p = new Promise(function (resolve) {
+        let highlights = [];
 
         function loader(annList) {
             if (typeof annList === 'undefined' || annList === null) {
                 annList = [];
             }
 
-            var now = annList.splice(0, self.options.chunkSize);
-            for (var i = 0, len = now.length; i < len; i++) {
+            const now = annList.splice(0, self.options.chunkSize);
+            for (let i = 0, len = now.length; i < len; i++) {
                 highlights = highlights.concat(self.draw(now[i]));
             }
 
@@ -112,7 +111,7 @@ Highlighter.prototype.drawAll = function (annotations) {
             }
         }
 
-        var clone = annotations.slice();
+        const clone = annotations.slice();
         loader(clone);
     });
 
@@ -125,28 +124,28 @@ Highlighter.prototype.drawAll = function (annotations) {
 //
 // Returns an Array of drawn highlight elements.
 Highlighter.prototype.draw = function (annotation) {
-    var normedRanges = [];
+    const normedRanges = [];
 
-    for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
-        var r = reanchorRange(annotation.ranges[i], this.element);
+    for (let i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
+        const r = reanchorRange(annotation.ranges[i], this.element);
         if (r !== null) {
             normedRanges.push(r);
         }
     }
 
-    var hasLocal = (typeof annotation._local !== 'undefined' &&
+    const hasLocal = (typeof annotation._local !== 'undefined' &&
                     annotation._local !== null);
     if (!hasLocal) {
         annotation._local = {};
     }
-    var hasHighlights = (typeof annotation._local.highlights !== 'undefined' &&
+    const hasHighlights = (typeof annotation._local.highlights !== 'undefined' &&
                          annotation._local.highlights === null);
     if (!hasHighlights) {
         annotation._local.highlights = [];
     }
 
-    for (var j = 0, jlen = normedRanges.length; j < jlen; j++) {
-        var normed = normedRanges[j];
+    for (let j = 0, jlen = normedRanges.length; j < jlen; j++) {
+        const normed = normedRanges[j];
         $.merge(
             annotation._local.highlights,
             highlightRange(normed, this.options.highlightClass)
@@ -171,7 +170,7 @@ Highlighter.prototype.draw = function (annotation) {
 //
 // Returns nothing.
 Highlighter.prototype.undraw = function (annotation) {
-    var hasHighlights = (typeof annotation._local !== 'undefined' &&
+    const hasHighlights = (typeof annotation._local !== 'undefined' &&
                          annotation._local !== null &&
                          typeof annotation._local.highlights !== 'undefined' &&
                          annotation._local.highlights !== null);
@@ -180,8 +179,8 @@ Highlighter.prototype.undraw = function (annotation) {
         return;
     }
 
-    for (var i = 0, len = annotation._local.highlights.length; i < len; i++) {
-        var h = annotation._local.highlights[i];
+    for (let i = 0, len = annotation._local.highlights.length; i < len; i++) {
+        const h = annotation._local.highlights[i];
         if (h.parentNode !== null) {
             $(h).replaceWith(h.childNodes);
         }
@@ -212,7 +211,7 @@ Highlighter.options = {
 // standalone is a module that uses the Highlighter to draw/undraw highlights
 // automatically when annotations are created and removed.
 exports.standalone = function standalone(element, options) {
-    var widget = exports.Highlighter(element, options);
+    const widget = exports.Highlighter(element, options);
 
     return {
         destroy: function () { widget.destroy(); },

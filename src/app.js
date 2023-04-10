@@ -2,14 +2,13 @@
 
 "use strict";
 
-var extend = require('backbone-extend-standalone');
-var Promise = require('es6-promise').Promise;
+const extend = require('backbone-extend-standalone');
 
-var authz = require('./authz');
-var identity = require('./identity');
-var notification = require('./notification');
-var registry = require('./registry');
-var storage = require('./storage');
+const authz = require('./authz');
+const identity = require('./identity');
+const notification = require('./notification');
+const registry = require('./registry');
+const storage = require('./storage');
 
 /**
  * class:: App()
@@ -50,7 +49,7 @@ function App() {
  * :rtype: App
  */
 App.prototype.include = function (module, options) {
-    var mod = module(options);
+    const mod = module(options);
     if (typeof mod.configure === 'function') {
         mod.configure(this.registry);
     }
@@ -62,7 +61,7 @@ App.prototype.include = function (module, options) {
 /**
  * function:: App.prototype.start()
  *
- * Tell the app that configuration is complete. This binds the various
+ * Tell the app that configuration is complete. This binds the constious
  * components passed to the registry to their canonical names so they can be
  * used by the rest of the application.
  *
@@ -77,8 +76,8 @@ App.prototype.start = function () {
     }
     this._started = true;
 
-    var self = this;
-    var reg = this.registry;
+    const self = this;
+    const reg = this.registry;
 
     this.authz = reg.getUtility('authorizationPolicy');
     this.ident = reg.getUtility('identityPolicy');
@@ -90,6 +89,8 @@ App.prototype.start = function () {
             return self.runHook.apply(self, arguments);
         }
     );
+
+    // console.log(this.annotations);
 
     return this.runHook('start', [this]);
 };
@@ -123,9 +124,9 @@ App.prototype.destroy = function () {
  * :rtype: Promise
  */
 App.prototype.runHook = function (name, args) {
-    var results = [];
-    for (var i = 0, len = this.modules.length; i < len; i++) {
-        var mod = this.modules[i];
+    const results = [];
+    for (let i = 0, len = this.modules.length; i < len; i++) {
+        const mod = this.modules[i];
         if (typeof mod[name] === 'function') {
             results.push(mod[name].apply(mod, args));
         }
@@ -143,7 +144,7 @@ App.prototype.runHook = function (name, args) {
  * hypothetical ``mymodules.foo.bar`` module depending on the options object
  * passed into the constructor::
  *
- *     var CustomApp = annotator.App.extend({
+ *     const CustomApp = annotator.App.extend({
  *         constructor: function (options) {
  *             App.apply(this);
  *             if (options.foo === 'bar') {
@@ -152,7 +153,7 @@ App.prototype.runHook = function (name, args) {
  *         }
  *     });
  *
- *     var app = new CustomApp({foo: 'bar'});
+ *     const app = new CustomApp({foo: 'bar'});
  *
  * :returns: The subclass constructor.
  * :rtype: Function
