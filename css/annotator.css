@@ -25,8 +25,8 @@
 -------------------------------------------------------------------- */
 
 .annotator-adder {
-	background-image: url(../img/annotator-icon-sprite.png?embed);
-	background-repeat: no-repeat;
+	background: #FFFFFF;
+	color: #3c3c3c;
 }
 
 .annotator-resize,
@@ -94,12 +94,15 @@
 .annotator-adder {
 	margin-top: -48px;
 	margin-left: -24px;
-	width: 48px;
-	height: 48px;
-	background-position: left top;
+	font-size: 14px;
+	color: #3c3c3c;
+	border: 1px solid gray;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px;
 }
 
-.annotator-adder:hover {
+/*.annotator-adder:hover {
 	background-position: center top;
 }
 
@@ -116,7 +119,7 @@
 	background: none;
 	text-indent: -999em;
 	cursor: pointer;
-}
+}*/
 
 /* Annotator Widget
    

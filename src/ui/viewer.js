@@ -121,7 +121,7 @@ var Viewer = exports.Viewer = Widget.extend({
                     // If there are many overlapping highlights, still only
                     // call _onHighlightMouseover once.
                     if (event.target === this) {
-                        self._onHighlightMouseover(event);
+                        self._onHighlightMouseover(event, options.onHover);
                     }
                 })
                 .on("mouseleave." + NS, '.annotator-hl', function () {
@@ -353,7 +353,7 @@ var Viewer = exports.Viewer = Widget.extend({
     // event - An Event object.
     //
     // Returns nothing.
-    _onHighlightMouseover: function (event) {
+    _onHighlightMouseover: function (event, callback) {
         // If the mouse button is currently depressed, we're probably trying to
         // make a selection, so we shouldn't show the viewer.
         if (this.mouseDown) {
@@ -370,9 +370,9 @@ var Viewer = exports.Viewer = Widget.extend({
                         return $(elem).data("annotation");
                     })
                     .toArray();
-
+                callback(annotations);
                 // Now show the viewer with the wanted annotations
-                self.load(annotations, util.mousePosition(event));
+                // self.load(annotations, util.mousePosition(event));
             });
     },
 

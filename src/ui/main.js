@@ -241,12 +241,15 @@ function main(options) {
         addPermissionsCheckboxes(s.editor, ident, authz);
 
         s.highlighter = new highlighter.Highlighter(options.element);
+        if (options.annotations && options.annotations.length > 0)
+            s.highlighter.drawAll(options.annotations);
 
         s.textselector = new textselector.TextSelector(options.element, {
             onSelection: function (ranges, event) {
                 if (ranges.length > 0) {
                     var annotation = makeAnnotation(ranges);
                     s.interactionPoint = util.mousePosition(event);
+                    // s.highlighter.draw(annotation);
                     s.adder.load(annotation, s.interactionPoint);
                 } else {
                     s.adder.hide();
@@ -272,7 +275,8 @@ function main(options) {
                 return authz.permits('delete', ann, ident.who());
             },
             autoViewHighlights: options.element,
-            extensions: options.viewerExtensions
+            extensions: options.viewerExtensions,
+            onHover: options.onHover
         });
         s.viewer.attach();
 

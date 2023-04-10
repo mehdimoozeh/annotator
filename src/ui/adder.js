@@ -23,10 +23,10 @@ var Adder = Widget.extend({
 
         var self = this;
         this.element
-            .on("click." + NS, 'button', function (e) {
+            .on("click." + NS, function (e) {
                 self._onClick(e);
             })
-            .on("mousedown." + NS, 'button', function (e) {
+            .on("mousedown." + NS, function (e) {
                 self._onMousedown(e);
             });
 
@@ -143,7 +143,7 @@ var Adder = Widget.extend({
 
 Adder.template = [
     '<div class="annotator-adder annotator-hide">',
-    '  <button type="button">' + _t('Annotate') + '</button>',
+    'Open Discussion',
     '</div>'
 ].join('\n');
 
