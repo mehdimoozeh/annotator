@@ -7,16 +7,11 @@ var $ = util.$;
 var _t = util.gettext;
 var Promise = util.Promise;
 
-
+const shortId = require('shortid');
 // id returns an identifier unique within this session
 var id = (function () {
-    var counter;
-    counter = -1;
-    return function () {
-        return counter += 1;
-    };
+    return shortId.generate
 }());
-
 
 /**
  * function:: debug()
