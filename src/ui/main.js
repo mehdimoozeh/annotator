@@ -23,6 +23,13 @@ function trim(s) {
     }
 }
 
+function findSectionId(element) {
+    const elAndParents = util.$(element).parents().addBack();
+    const parentDiv = elAndParents.filter('[data-sid]');
+    const sectionId = util.$(parentDiv[0]).attr('data-sid');
+    return sectionId;
+}
+
 
 // annotationFactory returns a function that can be used to construct an
 // annotation from a list of selected ranges.
@@ -37,7 +44,10 @@ function annotationFactory(contextEl, ignoreSelector) {
             serializedRanges.push(r.serialize(contextEl, ignoreSelector));
         }
 
+        const sectionId = findSectionId(ranges[0].commonAncestor);
+
         return {
+            sectionId,
             quote: text.join(' / '),
             ranges: serializedRanges
         };
